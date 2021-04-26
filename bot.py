@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 import os
+
 import vk_api  # импортируем библиотеки
 import vk
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor  # импортируем нужные модули
 from vk_api.utils import get_random_id
+import datetime
 
 vk_session = vk_api.VkApi(
     token='6181ac09755b06b499b0aed67cb6ff0b3cbbb7d8cc598a0f5c311b31fa5e252eff8dfb48c3170b8a1c34f')  # авторизируемся
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType  # импортируем нужные модули
+from vk_api.bot_longpoll import VkBotLongPoll  # импортируем нужные модули
 
 longpoll = VkBotLongPoll(vk_session, 203652377)
 vk = vk_session.get_api()
@@ -18,6 +21,66 @@ Lsvk = vk_session.get_api()
 keyboard = VkKeyboard(one_time=True)
 keyboard.add_button('Информация', color=VkKeyboardColor.NEGATIVE)
 keyboard.add_button('Обратная связь', color=VkKeyboardColor.NEGATIVE)
+
+
+def Feedback():
+    if not os.path.isdir("Feedback"):  # проверяем есть ли папка, если нет, то создаем
+        os.mkdir("Feedback")
+    vars_end = ['Назад']
+    vars_further = ['Вернуться в Главное меню']
+    # vars_personal_data = ['Оставить личные данные']
+    keyboard = VkKeyboard(one_time=True)
+    # keyboard.add_button('Вернуться в Главное меню', color=VkKeyboardColor.NEGATIVE)
+    keyboard.add_button('Назад', color=VkKeyboardColor.PRIMARY)
+    Lsvk.messages.send(
+        user_id=event.user_id,
+        random_id=get_random_id(),
+        keyboard=keyboard.get_keyboard(),
+        message='Здесь вы можете оставить отзыв о наших заведениях либо задать вопрос(что то такое) для обратной связи с вами свяжутся'
+    )
+    for event in Lslongpoll.listen():  # слушаем longpool на предмет новых сообщений. event — переменная в которой будет храниться само сообщение и некоторые данные о нем.
+        if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
+            if event.text not in vars_end:
+                if event.from_user:
+                    keyboard = VkKeyboard(one_time=True)
+                    keyboard.add_button('Вернуться в Главное меню', color=VkKeyboardColor.NEGATIVE)
+                    keyboard.add_button('Оставить личные данные', color=VkKeyboardColor.PRIMARY)
+                    Lsvk.messages.send(
+                        user_id=event.user_id,
+                        random_id=get_random_id(),
+                        keyboard=keyboard.get_keyboard(),
+                        message='Ваше сообщение было сохранено. Вы можете оставить свои обратные данные для связи с вами или для статистики'
+                    )
+                    # здесь тоже должно быть добавление в файл
+                    string_name_file = event.user_id + ['.txt']
+                    output_file = open(string_name_file, "w")
+                    output_file.write(event.text + '\r\n')
+                    now = datetime.datetime.now()
+                    output_file.write(now.strftime("%d-%m-%Y %H:%M") + '\r\n')
+                for event in Lslongpoll.listen():
+                    if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
+                        if event.text not in vars_further:
+                            Lsvk.messages.send(
+                                user_id=event.user_id,
+                                random_id=get_random_id(),
+                                keyboard=keyboard.get_keyboard(),
+                                message='Введите ваши личные данные'
+                            )
+                            for event in Lslongpoll.listen():
+                                if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
+                                    Lsvk.messages.send(
+                                        user_id=event.user_id,
+                                        random_id=get_random_id(),
+                                        keyboard=keyboard.get_keyboard(),
+                                        message='Введенные данные успешно сохранены'
+                                    )  # надо добавить добавление в файл
+                                    output_file.write('Personal data: ' + event.text + '\r\n')
+                                    output_file.close()
+                                break
+                        break
+            break
+
+
 for event in Lslongpoll.listen():  # слушаем longpool на предмет новых сообщений. event — переменная в которой будет храниться само сообщение и некоторые данные о нем.
     if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
         vars0 = ['Обратная связь']
@@ -104,53 +167,3 @@ for event in Lslongpoll.listen():  # слушаем longpool на предмет
                     keyboard=keyboard.get_keyboard(),
                     message='Лучше выбери снизу интересующую кнопку)))'
                 )
-
-
-def Feedback():
-    if not os.path.isdir("Feedback"):  # проверяем есть ли папка, если нет, то создаем
-        os.mkdir("Feedback")
-    vars_end = ['Назад']
-    vars_further = ['Вернуться в Главное меню']
-    # vars_personal_data = ['Оставить личные данные']
-    keyboard = VkKeyboard(one_time=True)
-    # keyboard.add_button('Вернуться в Главное меню', color=VkKeyboardColor.NEGATIVE)
-    keyboard.add_button('Назад', color=VkKeyboardColor.PRIMARY)
-    Lsvk.messages.send(
-        user_id=event.user_id,
-        random_id=get_random_id(),
-        keyboard=keyboard.get_keyboard(),
-        message='Здесь вы можете оставить отзыв о наших заведениях либо задать вопрос(что то такое) для обратной связи с вами свяжутся'
-    )
-    for event in Lslongpoll.listen():  # слушаем longpool на предмет новых сообщений. event — переменная в которой будет храниться само сообщение и некоторые данные о нем.
-        if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
-            if event.text not in vars_end:
-                if event.from_user:
-                    keyboard = VkKeyboard(one_time=True)
-                    keyboard.add_button('Вернуться в Главное меню', color=VkKeyboardColor.NEGATIVE)
-                    keyboard.add_button('Оставить личные данные', color=VkKeyboardColor.PRIMARY)
-                    Lsvk.messages.send(
-                        user_id=event.user_id,
-                        random_id=get_random_id(),
-                        keyboard=keyboard.get_keyboard(),
-                        message='Ваше сообщение было сохранено. Вы можете оставить свои обратные данные для связи с вами или для статистики'
-                    )#здесь тоже должно быть добавление в файл
-                for event in Lslongpoll.listen():
-                    if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
-                        if event.text not in vars_further:
-                            Lsvk.messages.send(
-                                user_id=event.user_id,
-                                random_id=get_random_id(),
-                                keyboard=keyboard.get_keyboard(),
-                                message='Введите ваши личные данные'
-                            )
-                            for event in Lslongpoll.listen():
-                                if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
-                                    Lsvk.messages.send(
-                                        user_id=event.user_id,
-                                        random_id=get_random_id(),
-                                        keyboard=keyboard.get_keyboard(),
-                                        message='Введенные данные успешно сохранены'
-                                    )  # надо добавить добавление в файл
-                                break
-                        break
-            break
