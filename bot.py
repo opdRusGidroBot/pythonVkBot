@@ -13,8 +13,12 @@ Lslongpoll = VkLongPoll(vk_session)
 Lsvk = vk_session.get_api()
 keyboard = VkKeyboard(one_time=True)
 keyboard.add_button('Информация', color=VkKeyboardColor.NEGATIVE)
+keyboard.add_button('Обратная связь', color=VkKeyboardColor.NEGATIVE)
 for event in Lslongpoll.listen():#слушаем longpool на предмет новых сообщений. event — переменная в которой будет храниться само сообщение и некоторые данные о нем.
     if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
+        vars0 = ['Обратная связь']
+        if event.text in vars0:
+
         vars1 = ['Привет', 'Ку', 'Хай', 'Хеллоу']
         if event.text in vars1:
             if event.from_user:#Проверяем откуда направлен наш event
@@ -81,6 +85,7 @@ for event in Lslongpoll.listen():#слушаем longpool на предмет н
             if event.from_user:#Проверяем откуда направлен наш event
                 keyboard = VkKeyboard(one_time=True)
                 keyboard.add_button('Информация', color=VkKeyboardColor.NEGATIVE)
+                keyboard.add_button('Обратная связь', color=VkKeyboardColor.NEGATIVE)
                 Lsvk.messages.send(
                                    user_id = event.user_id,
                                    random_id = get_random_id(),
@@ -95,3 +100,5 @@ for event in Lslongpoll.listen():#слушаем longpool на предмет н
                                    keyboard = keyboard.get_keyboard(),
                                    message = 'Лучше выбери снизу интересующую кнопку)))'
                                    )
+def Feedback():
+    
