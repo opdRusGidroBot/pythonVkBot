@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import vk_api #импортируем библиотеки
 import vk
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor#импортируем нужные модули
