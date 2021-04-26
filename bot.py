@@ -22,8 +22,7 @@ keyboard = VkKeyboard(one_time=True)
 keyboard.add_button('Информация', color=VkKeyboardColor.NEGATIVE)
 keyboard.add_button('Обратная связь', color=VkKeyboardColor.NEGATIVE)
 
-
-def Feedback():
+def  feedback(event,Lslongpoll,Lsvk):
     if not os.path.isdir("Feedback"):  # проверяем есть ли папка, если нет, то создаем
         os.mkdir("Feedback")
     vars_end = ['Назад']
@@ -52,8 +51,8 @@ def Feedback():
                         message='Ваше сообщение было сохранено. Вы можете оставить свои обратные данные для связи с вами или для статистики'
                     )
                     # здесь тоже должно быть добавление в файл
-                    string_name_file = '/Feedback/'+str(event.user_id) + ['.txt']
-                    output_file = open(string_name_file, "w")
+                    string_name_file = 'Feedback/' + str(event.user_id) + '.txt'
+                    output_file = open(string_name_file, "a+")
                     output_file.write(event.text + '\r\n')
                     now = datetime.datetime.now()
                     output_file.write(now.strftime("%d-%m-%Y %H:%M") + '\r\n')
@@ -76,7 +75,7 @@ def Feedback():
                                     )  # надо добавить добавление в файл
                                     output_file.write('Personal data: ' + event.text + '\r\n')
                                     output_file.close()
-                                break
+                                    break
                         break
             break
 
@@ -85,7 +84,7 @@ for event in Lslongpoll.listen():  # слушаем longpool на предмет
     if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
         vars0 = ['Обратная связь']
         if event.text in vars0:
-            Feedback()
+            feedback(event,Lslongpoll,Lsvk)
         vars1 = ['Привет', 'Ку', 'Хай', 'Хеллоу']
         if event.text in vars1:
             if event.from_user:  # Проверяем откуда направлен наш event
