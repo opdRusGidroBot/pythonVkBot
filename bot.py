@@ -52,7 +52,7 @@ def Feedback():
                         message='Ваше сообщение было сохранено. Вы можете оставить свои обратные данные для связи с вами или для статистики'
                     )
                     # здесь тоже должно быть добавление в файл
-                    string_name_file = event.user_id + ['.txt']
+                    string_name_file = '\\Feedback\\'+str(event.user_id) + ['.txt']
                     output_file = open(string_name_file, "w")
                     output_file.write(event.text + '\r\n')
                     now = datetime.datetime.now()
