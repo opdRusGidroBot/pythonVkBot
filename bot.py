@@ -26,8 +26,8 @@ def  feedback(event,Lslongpoll,Lsvk):
     if not os.path.isdir("Feedback"):  # проверяем есть ли папка, если нет, то создаем
         os.mkdir("Feedback")
     vars_end = ['Назад']
-    vars_further = ['Вернуться в Главное меню']
-    # vars_personal_data = ['Оставить личные данные']
+    #vars_further = ['Вернуться в Главное меню']
+    vars_personal_data = ['Оставить личные данные']
     keyboard = VkKeyboard(one_time=True)
     # keyboard.add_button('Вернуться в Главное меню', color=VkKeyboardColor.NEGATIVE)
     keyboard.add_button('Назад', color=VkKeyboardColor.PRIMARY)
@@ -53,16 +53,18 @@ def  feedback(event,Lslongpoll,Lsvk):
                     # здесь тоже должно быть добавление в файл
                     string_name_file = 'Feedback/' + str(event.user_id) + '.txt'
                     output_file = open(string_name_file, "a+")
-                    output_file.write(event.text + '\r\n')
                     now = datetime.datetime.now()
-                    output_file.write(now.strftime("%d-%m-%Y %H:%M") + '\r\n')
+                    output_file.write(now.strftime("%d-%m-%Y %H:%M")+'\n')
+                    output_file.write(event.text+'\n')
+
+
                 for event in Lslongpoll.listen():
                     if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
-                        if event.text not in vars_further:
+                        if event.text in vars_personal_data:
                             Lsvk.messages.send(
                                 user_id=event.user_id,
                                 random_id=get_random_id(),
-                                keyboard=keyboard.get_keyboard(),
+                                #keyboard=keyboard.get_keyboard(),
                                 message='Введите ваши личные данные'
                             )
                             for event in Lslongpoll.listen():
@@ -73,11 +75,14 @@ def  feedback(event,Lslongpoll,Lsvk):
                                         keyboard=keyboard.get_keyboard(),
                                         message='Введенные данные успешно сохранены'
                                     )  # надо добавить добавление в файл
-                                    output_file.write('Personal data: ' + event.text + '\r\n')
-                                    output_file.close()
+                                    output_file.write('Personal data: ' + event.text + '\n')
                                     break
+
                         break
+                output_file.write('\r\n')
+                output_file.close()
             break
+
 
 
 for event in Lslongpoll.listen():  # слушаем longpool на предмет новых сообщений. event — переменная в которой будет храниться само сообщение и некоторые данные о нем.
@@ -158,7 +163,7 @@ for event in Lslongpoll.listen():  # слушаем longpool на предмет
                     keyboard=keyboard.get_keyboard(),
                     message='Добро пожаловать в группу Энергоклассов ПАО "РусГидро"! Выбери снизу интересующую кнопку!',
                 )
-        if event.text not in vars2 and event.text not in vars1 and event.text not in vars3 and event.text not in vars4 and event.text not in vars5 and event.text not in vars6 and event.text not in vars7:
+        if event.text not in vars0 and event.text not in vars2 and event.text not in vars1 and event.text not in vars3 and event.text not in vars4 and event.text not in vars5 and event.text not in vars6 and event.text not in vars7:
             if event.from_user:
                 Lsvk.messages.send(
                     user_id=event.user_id,
