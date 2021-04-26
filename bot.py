@@ -18,7 +18,7 @@ for event in Lslongpoll.listen():#слушаем longpool на предмет н
     if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
         vars0 = ['Обратная связь']
         if event.text in vars0:
-
+            Feedback()
         vars1 = ['Привет', 'Ку', 'Хай', 'Хеллоу']
         if event.text in vars1:
             if event.from_user:#Проверяем откуда направлен наш event
@@ -81,7 +81,7 @@ for event in Lslongpoll.listen():#слушаем longpool на предмет н
                                    message = 'У нас ты сможешь принять участие в олимпиадах от ПАО "РусГидро", такие как: Отраслевая олимпиада школьников «Энергия образования» и другие Всероссийские олимпиады! При успешном участии у тебя есть возможность получить дополнительные балы к ЕГЭ при поступлении в наши ВУЗы-партрнеры!',
                                    )
         vars7 = ['Назад']
-        if event.text in vars7:
+        if event.text in vars7 or event.text in vars0:
             if event.from_user:#Проверяем откуда направлен наш event
                 keyboard = VkKeyboard(one_time=True)
                 keyboard.add_button('Информация', color=VkKeyboardColor.NEGATIVE)
@@ -101,4 +101,33 @@ for event in Lslongpoll.listen():#слушаем longpool на предмет н
                                    message = 'Лучше выбери снизу интересующую кнопку)))'
                                    )
 def Feedback():
-    
+    if not os.path.isdir("Feedback"):#проверяем есть ли папка, если нет, то создаем
+        os.mkdir("Feedback")
+    vars_end = ['Назад']
+    vars_further = ['Вернуться в Главное меню']
+    vars_personal_data = ['Оставить личные данные']
+    keyboard = VkKeyboard(one_time=True)
+    #keyboard.add_button('Вернуться в Главное меню', color=VkKeyboardColor.NEGATIVE)
+    keyboard.add_button('Назад', color=VkKeyboardColor.PRIMARY)
+    Lsvk.messages.send(
+         user_id=event.user_id,
+         random_id=get_random_id(),
+         keyboard=keyboard.get_keyboard(),
+         message='Здесь вы можете оставить отзыв о наших заведениях либо задать вопрос(что то такое) для обратной связи с вами свяжутся'
+     )
+    for event in Lslongpoll.listen():  # слушаем longpool на предмет новых сообщений. event — переменная в которой будет храниться само сообщение и некоторые данные о нем.
+        if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
+            if event.text in vars_end:
+                return
+             else:
+                if event.from_user:
+                    keyboard = VkKeyboard(one_time=True)
+                    keyboard.add_button('Вернуться в Главное меню', color=VkKeyboardColor.NEGATIVE)
+                    keyboard.add_button('Оставить личные данные', color=VkKeyboardColor.PRIMARY)
+                    Lsvk.messages.send(
+                        user_id=event.user_id,
+                        random_id=get_random_id(),
+                         keyboard=keyboard.get_keyboard(),
+                        message='Ваше сообщение было сохранено. Вы можете оставить свои обратные данные для связи с вами или для статистики'
+                     )
+
