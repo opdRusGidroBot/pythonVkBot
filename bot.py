@@ -2,13 +2,15 @@ import vk_api #импортируем библиотеки
 import vk
 import random
 import numpy
+import requests
+import json
 import os.path
 
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor#импортируем нужные модули
 from vk_api.utils import get_random_id
-vk_session = vk_api.VkApi(token='83251d2a49042848819b47a1e5600e069518d1b8df60c0a0100a373572b75cd6142cf833ebbff53a37e9d')#авторизируемся
+vk_session = vk_api.VkApi(token='6181ac09755b06b499b0aed67cb6ff0b3cbbb7d8cc598a0f5c311b31fa5e252eff8dfb48c3170b8a1c34f')#авторизируемся
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType#импортируем нужные модули
-longpoll = VkBotLongPoll(vk_session,203415295)
+longpoll = VkBotLongPoll(vk_session,203652377)
 vk = vk_session.get_api()
 from vk_api.longpoll import VkLongPoll, VkEventType#импортируем модуль Long pool для личных сообщений
 Lslongpoll = VkLongPoll(vk_session)
@@ -286,6 +288,31 @@ for event in Lslongpoll.listen():#слушаем longpool на предмет н
 
             elif cur.position =="news":
                 lock-=1
+
+                req = requests.get("https://api.nytimes.com/svc/topstories/v2/science.json?api-key=r9BGhIGR0oFeamp4xp77AJW8E5jV7eh7")
+                JSONload = json.loads(req.text)
+
+                keyboard = VkKeyboard(one_time=True)
+                out_info(keyboard)
+
+                if(JSONload['status'] == 'OK'):
+                    Lsvk.messages.send(
+                        user_id=event.user_id,
+                        random_id=get_random_id(),
+                        keyboard=keyboard.get_keyboard(),
+                        message='Подобрали специально для тебя пару последних новостей из мира науки от New York Times:\n\n ' \
+                             + JSONload["results"][0]["title"] + '\n' + JSONload["results"][0]["abstract"] + '\n' + JSONload["results"][0]["url"] + \
+                             '\n\n' + JSONload["results"][1]["title"] + '\n' + JSONload["results"][1]["abstract"] + '\n' + JSONload["results"][1]["url"] + '\n\n' + \
+                             JSONload["results"][2]["title"] + '\n' + JSONload["results"][2]["abstract"] + '\n' + JSONload["results"][2]["url"],
+                   )
+                else:
+                    Lsvk.messages.send(
+                        user_id=event.user_id,
+                        random_id=get_random_id(),
+                        keyboard=keyboard.get_keyboard(),
+                        message='Кажется сервера NYT пока что не хотят общаться с нами :c'
+                    )
+
                 # тело обратной связи
                 #if event.text in exitWordsForNews:
                 #   lock = exit('lobby','',cur, lock) Выход из Новостей закачивать этой функцией 
