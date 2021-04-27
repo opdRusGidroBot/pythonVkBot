@@ -4,6 +4,8 @@ import random
 import numpy
 import requests
 import json
+import os.path
+
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor#импортируем нужные модули
 from vk_api.utils import get_random_id
 vk_session = vk_api.VkApi(token='6181ac09755b06b499b0aed67cb6ff0b3cbbb7d8cc598a0f5c311b31fa5e252eff8dfb48c3170b8a1c34f')#авторизируемся
@@ -196,14 +198,22 @@ def get_position(msg):
         return "news"
 
 
+
 filename = 'questionsForQuiz.txt'
+
+size = 1
+maxsize = 0
+
+if os.path.isfile(filename):
+    size = int((count_lines(filename)-1) / 2)
+    maxsize = get_maxsize(filename)
+
 
 ListOfStudents=[]
 quest=[]
 vars=[]
 
-size = int((count_lines(filename)-1) / 2)
-maxsize = get_maxsize(filename)
+
 lock = 0
 
 for event in Lslongpoll.listen():#слушаем longpool на предмет новых сообщений. event — переменная в которой будет храниться само сообщение и некоторые данные о нем.
@@ -310,32 +320,40 @@ for event in Lslongpoll.listen():#слушаем longpool на предмет н
                 
             elif cur.position == "quiz":
                 lock -= 1
-                greetingWordsForQuiz = ['Викторина']
-                startWordsForQuiz = ['Старт','Еще раз']
-                exitWordsForQuiz = ['Закончить викторину','Выход','Назад']
 
-                if event.text in greetingWordsForQuiz:
-                    print_start('Для начала викторины жми \"Старт\"')
+                if maxsize == 0:
 
-                elif event.text in startWordsForQuiz:
-                    cur.game = 1
-                    quest,vars = get_quest(filename,cur,quest,vars)
-                    print_variants(quest,vars)
-                
-                elif event.text in exitWordsForQuiz: #Выход
-                    cur.game = 0
-                    cur.already = 0
-                    cur.score = 0
-                    lock = exit('lobby','Удачи!',cur, lock)
-                elif cur.game == 1:
-                    if cur.already<maxsize:
-                        check_answers(event,quest,cur)
+                    event.text = " "
+                    lock = exit('lobby','Извините, викторина сейчас недоступна :(',cur, lock)
+                    
+                else:   
+
+                    greetingWordsForQuiz = ['Викторина']
+                    startWordsForQuiz = ['Старт','Еще раз']
+                    exitWordsForQuiz = ['Закончить викторину','Выход','Назад']
+
+                    if event.text in greetingWordsForQuiz:
+                        print_start('Для начала викторины жми \"Старт\"')
+
+                    elif event.text in startWordsForQuiz:
+                        cur.game = 1
                         quest,vars = get_quest(filename,cur,quest,vars)
                         print_variants(quest,vars)
-
-                    else:
-                        check_answers(event,quest,cur)
-                        out_result(cur)
                     
-                else :
-                    print_start('Попробуй ввести что-то другое')
+                    elif event.text in exitWordsForQuiz: #Выход
+                        cur.game = 0
+                        cur.already = 0
+                        cur.score = 0
+                        lock = exit('lobby','Удачи!',cur, lock)
+                    elif cur.game == 1:
+                        if cur.already<maxsize:
+                            check_answers(event,quest,cur)
+                            quest,vars = get_quest(filename,cur,quest,vars)
+                            print_variants(quest,vars)
+
+                        else:
+                            check_answers(event,quest,cur)
+                            out_result(cur)
+                        
+                    else :
+                        print_start('Попробуй ввести что-то другое')
