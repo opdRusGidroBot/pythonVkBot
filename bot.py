@@ -22,7 +22,7 @@ keyboard = VkKeyboard(one_time=True)
 keyboard.add_button('Информация', color=VkKeyboardColor.NEGATIVE)
 keyboard.add_button('Обратная связь', color=VkKeyboardColor.NEGATIVE)
 
-def  feedback(event,Lslongpoll,Lsvk):
+def  feedback(event):
     if not os.path.isdir("Feedback"):  # проверяем есть ли папка, если нет, то создаем
         os.mkdir("Feedback")
     vars_end = ['Назад']
@@ -56,7 +56,7 @@ def  feedback(event,Lslongpoll,Lsvk):
                     now = datetime.datetime.now()
                     output_file.write(now.strftime("%d-%m-%Y %H:%M")+'\n')
                     output_file.write(event.text+'\n')
-
+                    output_file.close()
 
                 for event in Lslongpoll.listen():
                     if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
@@ -75,10 +75,13 @@ def  feedback(event,Lslongpoll,Lsvk):
                                         keyboard=keyboard.get_keyboard(),
                                         message='Введенные данные успешно сохранены'
                                     )  # надо добавить добавление в файл
+                                    output_file = open(string_name_file, "a+")
                                     output_file.write('Personal data: ' + event.text + '\n')
+                                    output_file.close()
                                     break
 
                         break
+                output_file = open(string_name_file, "a+")
                 output_file.write('\r\n')
                 output_file.close()
             break
