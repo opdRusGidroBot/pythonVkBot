@@ -313,10 +313,8 @@ for event in Lslongpoll.listen():#слушаем longpool на предмет н
                         message='Кажется сервера NYT пока что не хотят общаться с нами :c'
                     )
 
-                # тело обратной связи
-                #if event.text in exitWordsForNews:
-                #   lock = exit('lobby','',cur, lock) Выход из Новостей закачивать этой функцией 
-
+                event.text = " "
+                lock = exit('lobby','',cur, lock)
                 
             elif cur.position == "quiz":
                 lock -= 1
