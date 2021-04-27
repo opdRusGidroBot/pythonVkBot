@@ -6,6 +6,7 @@ import numpy
 import requests
 import json
 import os.path
+import datetime
 
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor#импортируем нужные модули
 from vk_api.utils import get_random_id
