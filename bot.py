@@ -9,10 +9,10 @@ from vk_api.keyboard import VkKeyboard, VkKeyboardColor  # импортируе�
 from vk_api.utils import get_random_id
 
 vk_session = vk_api.VkApi(
-    token='060cc53a38f585541dc2b35f4504fcaf4d8cddf97429b6c06635cd5c8a64cf6874fbd966560b470755638')  # авторизируемся
+    token='6181ac09755b06b499b0aed67cb6ff0b3cbbb7d8cc598a0f5c311b31fa5e252eff8dfb48c3170b8a1c34f')  # авторизируемся
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType  # импортируем нужные модули
 
-longpoll = VkBotLongPoll(vk_session, 204260918)
+longpoll = VkBotLongPoll(vk_session, 203652377)
 vk = vk_session.get_api()
 from vk_api.longpoll import VkLongPoll, VkEventType  # импортируем модуль Long pool для личных сообщений
 
