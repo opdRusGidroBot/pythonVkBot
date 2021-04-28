@@ -482,7 +482,7 @@ if __name__ == '__main__':
                                 elif event.text in vars_end:
                                     break
                                     # if event.text in exitWordsForSchedule:
-                    event.text = " "
+                    event.text = "0"
                     lock = exit('lobby', '', cur, lock)  # Выход из Обратной связи закачивать этой функцией
 
 
@@ -492,7 +492,7 @@ if __name__ == '__main__':
                     # тело обратной связи
                     feedback(event)
                     # if event.text in exitWordsForFeedback:
-                    event.text = " "
+                    event.text = "0"
                     lock = exit('lobby', '', cur, lock)  # Выход из Обратной связи закачивать этой функцией
 
 
@@ -527,7 +527,7 @@ if __name__ == '__main__':
                             message='Кажется сервера NYT пока что не хотят общаться с нами :c'
                         )
 
-                    event.text = " "
+                    event.text = "0"
                     lock = exit('lobby', '', cur, lock)  # Выход из Обратной связи закачивать этой функцией
 
 
@@ -536,7 +536,7 @@ if __name__ == '__main__':
 
                     if maxsize == 0:
 
-                        event.text = " "
+                        event.text = "0"
                         lock = exit('lobby', 'Извините, викторина сейчас недоступна :(', cur, lock)
 
                     else:
