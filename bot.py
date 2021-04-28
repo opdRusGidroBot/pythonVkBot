@@ -5,6 +5,8 @@ import sys
 import vk
 import random
 import numpy
+import requests
+import json
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor  # импортируем нужные модули
 from vk_api.utils import get_random_id
 
@@ -495,9 +497,29 @@ for event in Lslongpoll.listen():  # слушаем longpool на предмет
 
             elif cur.position == "news":
                 lock -= 1
-                # тело обратной связи
-                # if event.text in exitWordsForNews:
-                #   lock = exit('lobby','',cur, lock) Выход из Новостей закачивать этой функцией
+                if (JSONload['status'] == 'OK'):
+                    Lsvk.messages.send(
+                        user_id=event.user_id,
+                        random_id=get_random_id(),
+                        keyboard=keyboard.get_keyboard(),
+                        message='Подобрали специально для тебя пару последних новостей из мира науки от New York Times:\n\n ' \
+                                + JSONload["results"][0]["title"] + '\n' + JSONload["results"][0]["abstract"] + '\n' +
+                                JSONload["results"][0]["url"] + \
+                                '\n\n' + JSONload["results"][1]["title"] + '\n' + JSONload["results"][1][
+                                    "abstract"] + '\n' + JSONload["results"][1]["url"] + '\n\n' + \
+                                JSONload["results"][2]["title"] + '\n' + JSONload["results"][2]["abstract"] + '\n' +
+                                JSONload["results"][2]["url"],
+                    )
+                else:
+                    Lsvk.messages.send(
+                        user_id=event.user_id,
+                        random_id=get_random_id(),
+                        keyboard=keyboard.get_keyboard(),
+                        message='Кажется сервера NYT пока что не хотят общаться с нами :c'
+                    )
+
+                event.text = " "
+                lock = exit('lobby', '', cur, lock)
 
 
             elif cur.position == "quiz":
