@@ -357,207 +357,216 @@ vars = []
 
 lock = 0
 
-for event in Lslongpoll.listen():  # слушаем longpool на предмет новых сообщений. event — переменная в которой будет храниться само сообщение и некоторые данные о нем.
-    if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text and event.from_user:
-        cur = check(ListOfStudents, event.user_id, size)
-        lock = 1
-        while lock:
-            if cur.position == "lobby":
-                lock -= 1
-                greetings = ['Привет', 'Ку', 'Хай', 'Хеллоу']
-                listOfOptions = ['Викторина', 'Преподаватели', 'Обратная связь', 'Информация', 'Новости']
-                if event.text in greetings:
-                    out_lobby('Привет, выбери снизу интересующую кнопку!)')
-                elif event.text in listOfOptions:
-                    cur.position = get_position(event.text)
-                    lock += 1
-                else:
-                    out_lobby('Выбери снизу интересующую кнопку!')
-            elif cur.position == "info":
-                lock -= 1
-                university = ['Информация о ВУЗах-партнерах']
-                olimpyc = ['Олимпиады']
-                exitWordsForInfo = ['Назад']
-                genral_info = ['Общая информация']
-                keyboard = VkKeyboard(one_time=True)
-                out_info(keyboard)
-                if event.text in university:
-                    Lsvk.messages.send(
-                        user_id=event.user_id,
-                        random_id=get_random_id(),
-                        keyboard=keyboard.get_keyboard(),
-                        message='Благодаря Энергоклассам ПАО "РусГидро" у тебя есть шанс поступить в наши ВУЗы-партнеры, среди которых: Санкт-Петербургский политехнический университети им.Петра Великого в Институт...',
-                    )
-                elif event.text in olimpyc:
-                    Lsvk.messages.send(
-                        user_id=event.user_id,
-                        random_id=get_random_id(),
-                        keyboard=keyboard.get_keyboard(),
-                        message='У нас ты сможешь принять участие в олимпиадах от ПАО "РусГидро", такие как: Отраслевая олимпиада школьников «Энергия образования» и другие Всероссийские олимпиады! При успешном участии...',
-                    )
-                elif event.text in genral_info:
-                    Lsvk.messages.send(
-                        user_id=event.user_id,
-                        random_id=get_random_id(),
-                        keyboard=keyboard.get_keyboard(),
-                        message='РусГидро приглашает школьников девяти регионов России в Энергоклассы и на факультативные занятия по теории решения изобретательских задач (ТРИЗ). В рамках образовательного проекта Энергоклассов учащиеся 9-11 классов...',
-                    )
-                elif event.text in exitWordsForInfo:
-                    lock = exit('lobby', '', cur, lock)
-                else:
-                    Lsvk.messages.send(
-                        user_id=event.user_id,
-                        random_id=get_random_id(),
-                        keyboard=keyboard.get_keyboard(),
-                        message='Выбери снизу интересующую кнопку!',
-                    )
-
-
-            elif cur.position == "teacher_info":
-                lock -= 1
-                # тело расписания
-                if event.from_user:  # Проверяем откуда направлен наш event
-                    vars_end = ['Назад']
-                    vars_get_teacher_info = ['Получить контакты']
-                    vars_add_teacher_info = ['Добавить контакты']
-
+if __name__ == '__main__':
+    for event in Lslongpoll.listen():  # слушаем longpool на предмет новых сообщений. event — переменная в которой будет храниться само сообщение и некоторые данные о нем.
+        if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text and event.from_user:
+            cur = check(ListOfStudents, event.user_id, size)
+            lock = 1
+            while lock:
+                if cur.position == "lobby":
+                    lock -= 1
+                    greetings = ['Привет', 'Ку', 'Хай', 'Хеллоу']
+                    listOfOptions = ['Викторина', 'Преподаватели', 'Обратная связь', 'Информация', 'Новости']
+                    if event.text in greetings:
+                        out_lobby('Привет, выбери снизу интересующую кнопку!)')
+                    elif event.text in listOfOptions:
+                        cur.position = get_position(event.text)
+                        lock += 1
+                    else:
+                        out_lobby('Выбери снизу интересующую кнопку!')
+                elif cur.position == "info":
+                    lock -= 1
+                    university = ['Информация о ВУЗах-партнерах']
+                    olimpyc = ['Олимпиады']
+                    exitWordsForInfo = ['Назад']
+                    genral_info = ['Общая информация']
                     keyboard = VkKeyboard(one_time=True)
-                    keyboard.add_button('Получить контакты', color=VkKeyboardColor.PRIMARY)
-                    keyboard.add_button('Добавить контакты', color=VkKeyboardColor.PRIMARY)
-                    keyboard.add_line()
-                    keyboard.add_button('Назад', color=VkKeyboardColor.NEGATIVE)
-                    Lsvk.messages.send(
-                        user_id=event.user_id,
-                        random_id=get_random_id(),
-                        keyboard=keyboard.get_keyboard(),
-                        message="ʕ ᵔᴥᵔ ʔ",
-                    )
+                    out_info(keyboard)
+                    if event.text in university:
+                        Lsvk.messages.send(
+                            user_id=event.user_id,
+                            random_id=get_random_id(),
+                            keyboard=keyboard.get_keyboard(),
+                            message='Благодаря Энергоклассам ПАО "РусГидро" у тебя есть шанс поступить в наши ВУЗы-партнеры, среди которых: Санкт-Петербургский политехнический университети им.Петра Великого в Институт...',
+                        )
+                    elif event.text in olimpyc:
+                        Lsvk.messages.send(
+                            user_id=event.user_id,
+                            random_id=get_random_id(),
+                            keyboard=keyboard.get_keyboard(),
+                            message='У нас ты сможешь принять участие в олимпиадах от ПАО "РусГидро", такие как: Отраслевая олимпиада школьников «Энергия образования» и другие Всероссийские олимпиады! При успешном участии...',
+                        )
+                    elif event.text in genral_info:
+                        Lsvk.messages.send(
+                            user_id=event.user_id,
+                            random_id=get_random_id(),
+                            keyboard=keyboard.get_keyboard(),
+                            message='РусГидро приглашает школьников девяти регионов России в Энергоклассы и на факультативные занятия по теории решения изобретательских задач (ТРИЗ). В рамках образовательного проекта Энергоклассов учащиеся 9-11 классов...',
+                        )
+                    elif event.text in exitWordsForInfo:
+                        lock = exit('lobby', '', cur, lock)
+                    else:
+                        Lsvk.messages.send(
+                            user_id=event.user_id,
+                            random_id=get_random_id(),
+                            keyboard=keyboard.get_keyboard(),
+                            message='Выбери снизу интересующую кнопку!',
+                        )
 
-                    for event in Lslongpoll.listen():  # слушаем longpool на предмет новых сообщений. event — переменная в которой будет храниться само сообщение и некоторые данные о нем.
-                        if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
-                            if event.text in vars_get_teacher_info:
-                                if event.from_user:  # Проверяем откуда направлен наш event
-                                    Lsvk.messages.send(
-                                        user_id=event.user_id,
-                                        random_id=get_random_id(),
-                                        keyboard=None,
-                                        message='Напиши Фамилию преподавателя, контакты которого тебя интересуют',
-                                    )
-                                for event in Lslongpoll.listen():  # слушаем longpool на предмет новых сообщений. event — переменная в которой будет храниться само сообщение и некоторые данные о нем.
-                                    if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
-                                        if event.text not in vars_end:
-                                            if event.from_user:
-                                                Lsvk.messages.send(
-                                                    user_id=event.user_id,
-                                                    random_id=get_random_id(),
-                                                    keyboard=keyboard.get_keyboard(),
-                                                    message=read(event.text),
-                                                )
-                                        break
 
+                elif cur.position == "teacher_info":
+                    lock -= 1
+                    # тело расписания
+                    if event.from_user:  # Проверяем откуда направлен наш event
+                        vars_end = ['Назад']
+                        vars_get_teacher_info = ['Получить контакты']
+                        vars_add_teacher_info = ['Добавить контакты']
 
-                            elif event.text in vars_add_teacher_info:
-                                if event.from_user:  # Проверяем откуда направлен наш event
-                                    Lsvk.messages.send(
-                                        user_id=event.user_id,
-                                        random_id=get_random_id(),
-                                        keyboard=None,
-                                        message='Напишите данные преподавателя в виде:\n(Фамилия Имя Отчество)(телефон)(почта)\nЕсли какие-то данные отсутствуют, оставте скобки пустыми.',
-                                    )
-                                for event in Lslongpoll.listen():  # слушаем longpool на предмет новых сообщений. event — переменная в которой будет храниться само сообщение и некоторые данные о нем.
-                                    if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
-                                        if event.text not in vars_end:
-                                            if event.from_user:
-                                                Lsvk.messages.send(
-                                                    user_id=event.user_id,
-                                                    random_id=get_random_id(),
-                                                    keyboard=keyboard.get_keyboard(),
-                                                    message=is_it_ok(event.text),
-                                                )
-                                            if is_it_ok(event.text) == "Готово!":
-                                                write_new(event.text)
+                        keyboard = VkKeyboard(one_time=True)
+                        keyboard.add_button('Получить контакты', color=VkKeyboardColor.PRIMARY)
+                        keyboard.add_button('Добавить контакты', color=VkKeyboardColor.PRIMARY)
+                        keyboard.add_line()
+                        keyboard.add_button('Назад', color=VkKeyboardColor.NEGATIVE)
+                        Lsvk.messages.send(
+                            user_id=event.user_id,
+                            random_id=get_random_id(),
+                            keyboard=keyboard.get_keyboard(),
+                            message="ʕ ᵔᴥᵔ ʔ",
+                        )
+
+                        for event in Lslongpoll.listen():  # слушаем longpool на предмет новых сообщений. event — переменная в которой будет храниться само сообщение и некоторые данные о нем.
+                            if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
+                                if event.text in vars_get_teacher_info:
+                                    if event.from_user:  # Проверяем откуда направлен наш event
+                                        Lsvk.messages.send(
+                                            user_id=event.user_id,
+                                            random_id=get_random_id(),
+                                            keyboard=None,
+                                            message='Напиши Фамилию преподавателя, контакты которого тебя интересуют',
+                                        )
+                                    for event in Lslongpoll.listen():  # слушаем longpool на предмет новых сообщений. event — переменная в которой будет храниться само сообщение и некоторые данные о нем.
+                                        if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
+                                            if event.text not in vars_end:
+                                                if event.from_user:
+                                                    Lsvk.messages.send(
+                                                        user_id=event.user_id,
+                                                        random_id=get_random_id(),
+                                                        keyboard=keyboard.get_keyboard(),
+                                                        message=read(event.text),
+                                                    )
                                             break
 
-                            elif event.text in vars_end:
-                                break
-                                # if event.text in exitWordsForSchedule:
-                event.text = " "
-                lock = exit('lobby', '', cur, lock)  # Выход из Обратной связи закачивать этой функцией
+
+                                elif event.text in vars_add_teacher_info:
+                                    if event.from_user:  # Проверяем откуда направлен наш event
+                                        Lsvk.messages.send(
+                                            user_id=event.user_id,
+                                            random_id=get_random_id(),
+                                            keyboard=None,
+                                            message='Напишите данные преподавателя в виде:\n(Фамилия Имя Отчество)(телефон)(почта)\nЕсли какие-то данные отсутствуют, оставте скобки пустыми.',
+                                        )
+                                    for event in Lslongpoll.listen():  # слушаем longpool на предмет новых сообщений. event — переменная в которой будет храниться само сообщение и некоторые данные о нем.
+                                        if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
+                                            if event.text not in vars_end:
+                                                if event.from_user:
+                                                    Lsvk.messages.send(
+                                                        user_id=event.user_id,
+                                                        random_id=get_random_id(),
+                                                        keyboard=keyboard.get_keyboard(),
+                                                        message=is_it_ok(event.text),
+                                                    )
+                                                if is_it_ok(event.text) == "Готово!":
+                                                    write_new(event.text)
+                                                break
+
+                                elif event.text in vars_end:
+                                    break
+                                    # if event.text in exitWordsForSchedule:
+                    event.text = " "
+                    lock = exit('lobby', '', cur, lock)  # Выход из Обратной связи закачивать этой функцией
 
 
 
-            elif cur.position == "feedback":
-                lock -= 1
-                # тело обратной связи
-                feedback(event)
-                # if event.text in exitWordsForFeedback:
-                event.text = " "
-                lock = exit('lobby', '', cur, lock)  # Выход из Обратной связи закачивать этой функцией
+                elif cur.position == "feedback":
+                    lock -= 1
+                    # тело обратной связи
+                    feedback(event)
+                    # if event.text in exitWordsForFeedback:
+                    event.text = " "
+                    lock = exit('lobby', '', cur, lock)  # Выход из Обратной связи закачивать этой функцией
 
 
-            elif cur.position == "news":
-                lock -= 1
-                if (JSONload['status'] == 'OK'):
-                    Lsvk.messages.send(
-                        user_id=event.user_id,
-                        random_id=get_random_id(),
-                        keyboard=keyboard.get_keyboard(),
-                        message='Подобрали специально для тебя пару последних новостей из мира науки от New York Times:\n\n ' \
-                                + JSONload["results"][0]["title"] + '\n' + JSONload["results"][0]["abstract"] + '\n' +
-                                JSONload["results"][0]["url"] + \
-                                '\n\n' + JSONload["results"][1]["title"] + '\n' + JSONload["results"][1][
-                                    "abstract"] + '\n' + JSONload["results"][1]["url"] + '\n\n' + \
-                                JSONload["results"][2]["title"] + '\n' + JSONload["results"][2]["abstract"] + '\n' +
-                                JSONload["results"][2]["url"],
-                    )
-                else:
-                    Lsvk.messages.send(
-                        user_id=event.user_id,
-                        random_id=get_random_id(),
-                        keyboard=keyboard.get_keyboard(),
-                        message='Кажется сервера NYT пока что не хотят общаться с нами :c'
-                    )
+                elif cur.position == "news":
+                    lock -= 1
 
-                event.text = " "
-                lock = exit('lobby', '', cur, lock)
+                    req = requests.get(
+                        "https://api.nytimes.com/svc/topstories/v2/science.json?api-key=r9BGhIGR0oFeamp4xp77AJW8E5jV7eh7")
+                    JSONload = json.loads(req.text)
 
+                    keyboard = VkKeyboard(one_time=True)
+                    out_info(keyboard)
 
-            elif cur.position == "quiz":
-                lock -= 1
-
-                if maxsize == 0:
+                    if (JSONload['status'] == 'OK'):
+                        Lsvk.messages.send(
+                            user_id=event.user_id,
+                            random_id=get_random_id(),
+                            keyboard=keyboard.get_keyboard(),
+                            message='Подобрали специально для тебя пару последних новостей из мира науки от New York Times:\n\n ' \
+                                    + JSONload["results"][0]["title"] + '\n' + JSONload["results"][0]["abstract"] + '\n' +
+                                    JSONload["results"][0]["url"] + \
+                                    '\n\n' + JSONload["results"][1]["title"] + '\n' + JSONload["results"][1][
+                                        "abstract"] + '\n' + JSONload["results"][1]["url"] + '\n\n' + \
+                                    JSONload["results"][2]["title"] + '\n' + JSONload["results"][2]["abstract"] + '\n' +
+                                    JSONload["results"][2]["url"],
+                        )
+                    else:
+                        Lsvk.messages.send(
+                            user_id=event.user_id,
+                            random_id=get_random_id(),
+                            keyboard=keyboard.get_keyboard(),
+                            message='Кажется сервера NYT пока что не хотят общаться с нами :c'
+                        )
 
                     event.text = " "
-                    lock = exit('lobby', 'Извините, викторина сейчас недоступна :(', cur, lock)
+                    lock = exit('lobby', '', cur, lock)  # Выход из Обратной связи закачивать этой функцией
 
-                else:
 
-                    greetingWordsForQuiz = ['Викторина']
-                    startWordsForQuiz = ['Старт', 'Еще раз']
-                    exitWordsForQuiz = ['Закончить викторину', 'Выход', 'Назад']
+                elif cur.position == "quiz":
+                    lock -= 1
 
-                    if event.text in greetingWordsForQuiz:
-                        print_start('Для начала викторины жми \"Старт\"')
+                    if maxsize == 0:
 
-                    elif event.text in startWordsForQuiz:
-                        cur.game = 1
-                        quest, vars = get_quest(filename, cur, quest, vars)
-                        print_variants(quest, vars)
+                        event.text = " "
+                        lock = exit('lobby', 'Извините, викторина сейчас недоступна :(', cur, lock)
 
-                    elif event.text in exitWordsForQuiz:  # Выход
-                        cur.game = 0
-                        cur.already = 0
-                        cur.score = 0
-                        lock = exit('lobby', 'Удачи!', cur, lock)
-                    elif cur.game == 1:
-                        if cur.already < maxsize:
-                            check_answers(event, quest, cur)
+                    else:
+
+                        greetingWordsForQuiz = ['Викторина']
+                        startWordsForQuiz = ['Старт', 'Еще раз']
+                        exitWordsForQuiz = ['Закончить викторину', 'Выход', 'Назад']
+
+                        if event.text in greetingWordsForQuiz:
+                            print_start('Для начала викторины жми \"Старт\"')
+
+                        elif event.text in startWordsForQuiz:
+                            cur.game = 1
                             quest, vars = get_quest(filename, cur, quest, vars)
                             print_variants(quest, vars)
 
-                        else:
-                            check_answers(event, quest, cur)
-                            out_result(cur)
+                        elif event.text in exitWordsForQuiz:  # Выход
+                            cur.game = 0
+                            cur.already = 0
+                            cur.score = 0
+                            lock = exit('lobby', 'Удачи!', cur, lock)
+                        elif cur.game == 1:
+                            if cur.already < maxsize:
+                                check_answers(event, quest, cur)
+                                quest, vars = get_quest(filename, cur, quest, vars)
+                                print_variants(quest, vars)
 
-                    else:
-                        print_start('Попробуй ввести что-то другое')
+                            else:
+                                check_answers(event, quest, cur)
+                                out_result(cur)
+
+                        else:
+                            print_start('Попробуй ввести что-то другое')
